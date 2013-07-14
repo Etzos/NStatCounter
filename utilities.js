@@ -1,6 +1,7 @@
 function calcMaxHealth(str) {
-    // Base Strength * 2 + 8 + Item HP
-    return str*2 + 8;
+    // From auto-code: (Base Strength + Mod Strength - 1) * 2 + 10 + Item HP
+    return (str-1)*2 + 10;
+
 }
 
 function calcMaxMana(int) {

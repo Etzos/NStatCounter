@@ -16,12 +16,19 @@ ApplicationWindow {
 
     function updateStats() {
         // This gets the values and calls the functions for updating
-        var lvl = levelSpinner.value | 1;
-        var str = strSpinner.value | 2;
-        var dex = dexSpinner.value | 2;
-        var itl = intSpinner.value | 1;
-        var cha = chaSpinner.value | 1;
+        var lvl = levelSpinner.value;
+        var str = strSlider.value;
+        var dex = dexSlider.value;
+        var itl = intSlider.value;
+        var cha = chaSlider.value;
 
+        // Action points
+
+        // HP
+        var health = Util.calcMaxHealth(str);
+        healthVal.text = health;
+
+        // Hit Chance
         var hitChance = Util.calcHitChance(dex, lvl);
         hitChanceVal.text = hitChance + "%";
     }
@@ -105,7 +112,6 @@ ApplicationWindow {
                     font.underline: true
                     font.bold: false
                     font.pointSize: 15
-                    font.pixelSize: 12
                 }
 
                 Text {
@@ -189,8 +195,12 @@ ApplicationWindow {
                     x: 53
                     y: 4
                     width: 60
+
+                    minimumValue: 1
+                    maximumValue: 9999
                     value: 1
-                    //onValueChanged: updateStats
+
+                    onValueChanged: mainWindow.changeLevel()
                 }
             }
 
@@ -204,176 +214,68 @@ ApplicationWindow {
                 anchors.left: parent.left
                 anchors.leftMargin: 3
 
-                Item {
-                    id: strContainer
+                StatSlider {
+                    id: strSlider
+
                     height: 25
                     anchors.right: parent.right
                     anchors.rightMargin: 0
                     anchors.left: parent.left
                     anchors.leftMargin: 0
 
-                    Label {
-                        id: strLabel
-                        y: 4
-                        text: "Strength"
-                        anchors.left: parent.left
-                        anchors.leftMargin: 6
-                        anchors.verticalCenter: parent.verticalCenter
-                        font.bold: true
-                    }
-
-                    Slider {
-                        id: strSlider
-                        y: 1
-                        height: 22
-                        anchors.verticalCenterOffset: 0
-                        anchors.right: strSpinner.left
-                        anchors.rightMargin: 3
-                        anchors.left: parent.left
-                        anchors.leftMargin: 90
-                        anchors.verticalCenter: parent.verticalCenter
-                    }
-
-                    SpinBox {
-                        id: strSpinner
-                        x: 552
-                        y: 0
-                        width: 60
-                        height: 22
-                        anchors.right: parent.right
-                        anchors.rightMargin: 3
-                        anchors.verticalCenter: parent.verticalCenter
-                        value: 2
-                    }
+                    name: "Strength"
+                    value: 2
+                    max: (levelSpinner.value * 6) + 2
+                    min: 2
+                    onValueChanged: mainWindow.updateStats()
                 }
 
-                Item {
-                    id: dexContainer
+                StatSlider {
+                    id: dexSlider
+
                     height: 25
                     anchors.right: parent.right
                     anchors.rightMargin: 0
                     anchors.left: parent.left
                     anchors.leftMargin: 0
 
-                    Label {
-                        id: dexLabel
-                        y: 4
-                        text: "Dexterity"
-                        anchors.left: parent.left
-                        anchors.leftMargin: 6
-                        anchors.verticalCenter: parent.verticalCenter
-                        font.bold: true
-                    }
-
-                    Slider {
-                        id: dexSlider
-                        y: 5
-                        height: 22
-                        anchors.right: dexSpinner.left
-                        anchors.rightMargin: 3
-                        anchors.left: parent.left
-                        anchors.leftMargin: 90
-                        anchors.verticalCenter: parent.verticalCenter
-                    }
-
-                    SpinBox {
-                        id: dexSpinner
-                        x: 552
-                        y: 0
-                        width: 60
-                        height: 22
-                        anchors.right: parent.right
-                        anchors.rightMargin: 3
-                        anchors.verticalCenter: parent.verticalCenter
-                        value: 2
-                        onValueChanged: mainWindow.updateStats()
-                    }
+                    name: "Dexterity"
+                    value: 2
+                    max: (levelSpinner.value * 6) + 2
+                    min: 2
+                    onValueChanged: mainWindow.updateStats()
                 }
 
-                Item {
-                    id: intContainer
+                StatSlider {
+                    id: intSlider
+
                     height: 25
                     anchors.right: parent.right
                     anchors.rightMargin: 0
                     anchors.left: parent.left
                     anchors.leftMargin: 0
 
-                    Label {
-                        id: intLabel
-                        y: 4
-                        text: "Intelligence"
-                        anchors.left: parent.left
-                        anchors.leftMargin: 6
-                        anchors.verticalCenter: parent.verticalCenter
-                        font.bold: true
-                    }
-
-                    Slider {
-                        id: intSlider
-                        y: 10
-                        height: 22
-                        anchors.right: intSpinner.left
-                        anchors.rightMargin: 3
-                        anchors.left: parent.left
-                        anchors.leftMargin: 90
-                        anchors.verticalCenter: parent.verticalCenter
-                    }
-
-                    SpinBox {
-                        id: intSpinner
-                        x: 552
-                        y: 0
-                        width: 60
-                        height: 22
-                        anchors.right: parent.right
-                        anchors.rightMargin: 3
-                        anchors.verticalCenter: parent.verticalCenter
-                        value: 1
-                    }
+                    name: "Intelligence"
+                    value: 1
+                    max: (levelSpinner.value * 6) + 2
+                    min: 1
+                    onValueChanged: mainWindow.updateStats()
                 }
 
-                Item {
-                    id: chaContainer
-                    width: 614
+                StatSlider {
+                    id: chaSlider
+
                     height: 25
                     anchors.right: parent.right
                     anchors.rightMargin: 0
                     anchors.left: parent.left
                     anchors.leftMargin: 0
 
-                    Label {
-                        id: chaLabel
-                        y: 4
-                        text: "Charisma"
-                        anchors.left: parent.left
-                        anchors.leftMargin: 6
-                        anchors.verticalCenter: parent.verticalCenter
-                        font.bold: true
-                    }
-
-                    Slider {
-                        id: chaSlider
-                        y: 14
-                        height: 22
-                        anchors.right: chaSpinner.left
-                        anchors.rightMargin: 3
-                        anchors.left: parent.left
-                        anchors.leftMargin: 90
-                        anchors.verticalCenter: parent.verticalCenter
-                    }
-
-                    SpinBox {
-                        id: chaSpinner
-                        x: 552
-                        y: 0
-                        width: 60
-                        height: 22
-                        anchors.right: parent.right
-                        anchors.rightMargin: 3
-                        anchors.verticalCenter: parent.verticalCenter
-                        maximumValue: 9999
-                        value: 1
-                    }
+                    name: "Charisma"
+                    value: 1
+                    max: (levelSpinner.value * 6) + 2
+                    min: 1
+                    onValueChanged: mainWindow.updateStats()
                 }
             }
 
@@ -449,7 +351,7 @@ ApplicationWindow {
                     }
 
                     Text {
-                        id: text1
+                        id: healthVal
                         text: qsTr("1")
                         anchors.left: parent.left
                         anchors.leftMargin: 110
