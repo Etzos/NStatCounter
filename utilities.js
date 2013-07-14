@@ -19,7 +19,7 @@ function calcMaxLoad(level, str) {
 function calcPetLevel(level, cha) {
     // 1.5 * Min( Level, Base Charisma + Item Charisma/2 )
     // Again, approximate here because we don't know the item charisma
-    return 1.5 * Math.min(level, cha);
+    return Math.ceil( 1.5 * Math.min(level, cha) );
 }
 
 function calcMaxDamage(str, dex) {

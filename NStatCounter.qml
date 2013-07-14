@@ -255,7 +255,7 @@ ApplicationWindow {
                     id: hitChanceDisplay
 
                     name: "Hit Chance"
-                    value: Util.calcHitChance(dexSlider.value, levelSpinner.value)
+                    value: Util.calcHitChance(dexSlider.value, levelSpinner.value)+"%"
                 }
             }
         }
