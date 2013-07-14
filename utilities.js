@@ -4,10 +4,10 @@ function calcMaxHealth(str) {
 
 }
 
-function calcMaxMana(int) {
+function calcMaxMana(itl) {
     // Base Intelligence * 2 + 8 + Item MP
     // From auto-code: ( Base Int + Current Int - 1) * 2 + 10
-    return int*2 + 8;
+    return itl*2 + 8;
 }
 
 function calcMaxLoad(level, str) {
@@ -19,7 +19,7 @@ function calcMaxLoad(level, str) {
 function calcPetLevel(level, cha) {
     // 1.5 * Min( Level, Base Charisma + Item Charisma/2 )
     // Again, approximate here because we don't know the item charisma
-    return 1.5*Math.min(level, cha);
+    return 1.5 * Math.min(level, cha);
 }
 
 function calcMaxDamage(str, dex) {
@@ -32,10 +32,4 @@ function calcHitChance(dex, level) {
     // Round( Pow( Total Dexterity, 0.5 ) / ( Pow( Total Dexterity, 0.5 ) + Pow( Level *2, 0.5 )) * 100 )
     var dexChance = Math.pow(dex, 0.5);
     return Math.round( dexChance / (dexChance + Math.pow(level*2, 0.5)) * 100 );
-}
-
-function calcAll() {
-    var dex = levelSpinner.value;
-    console.log(dex);
-    debugger;
 }
