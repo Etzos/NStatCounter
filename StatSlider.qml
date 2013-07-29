@@ -19,8 +19,8 @@ Item {
         font.bold: true
     }
 
-    Slider {
-        id: statSlider
+    ProgressBar {
+        id: statBar
         y: 1
         height: 22
         anchors.verticalCenterOffset: 0
@@ -30,13 +30,9 @@ Item {
         anchors.leftMargin: 90
         anchors.verticalCenter: parent.verticalCenter
 
-        maximumValue: parent.max
-        minimumValue: parent.min
-        value: parent.value
-
-        onValueChanged: {
-            parent.value = value;
-        }
+        maximumValue: 100
+        minimumValue: 0
+        value: (parent.value/parent.max) * 100
     }
 
     SpinBox {
