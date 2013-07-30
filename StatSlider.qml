@@ -2,12 +2,20 @@ import QtQuick 2.0
 import QtQuick.Controls 1.0
 
 Item {
+    id: rootItem
     height: 25
 
     property int value: 1
     property int max: 1
     property int min: 1
+    property int remainingValues: 1
     property string name: "Stat"
+
+    /*onValueChanged: {
+        if(value > max) {
+            value = max;
+        }
+    }*/
 
     Label {
         id: statLabel
@@ -32,7 +40,8 @@ Item {
 
         maximumValue: 100
         minimumValue: 0
-        value: (parent.value/parent.max) * 100
+
+        value: Math.min( ((parent.value/parent.max) * 100), maximumValue )
     }
 
     SpinBox {
@@ -45,14 +54,13 @@ Item {
         anchors.rightMargin: 3
         anchors.verticalCenter: parent.verticalCenter
 
-        maximumValue: parent.max
+        maximumValue: parent.value+parent.remainingValues
         minimumValue: parent.min
         value: parent.value
 
         onValueChanged: {
             parent.value = value;
         }
-
     }
 }
 

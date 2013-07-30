@@ -9,7 +9,6 @@ Window {
     minimumWidth: width
     maximumHeight: height
     maximumWidth: width
-    modality: Qt.NonModal
 
     Rectangle {
         id: rectangle1

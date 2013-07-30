@@ -9,11 +9,90 @@ import "utilities.js" as Util
 ApplicationWindow {
     id: mainWindow
     title: "NStatCounter"
-    width: 450
-    height: 400
+    width: 400
+    height: 450
     minimumWidth: 400
     minimumHeight: 375
-    
+    visible: true
+
+    property alias level: levelSpinner.value
+
+    property alias strength: strSlider.value
+    property alias dexterity: dexSlider.value
+    property alias intelligence: intSlider.value
+    property alias charisma: chaSlider.value
+
+    property int ap: level*6
+    property int usedAp: strength + dexterity + intelligence + charisma - 6 // 6 is the total AP already assigned at creation
+    property bool usedAllAp: (usedAp < ap)
+    property int remainingAp: ap - usedAp
+
+    onLevelChanged: {
+        // Can't use the ap prop because it depends on level
+        var diff = (level*6) - (strength + dexterity + intelligence + charisma - 6);
+        // Only matters when more than the available ap is used
+        if(diff >= 0 || !strSlider) {
+            return;
+        }
+
+        // Reduce stats until there is no diff (an expensive operation!)
+        var iterator = 0;
+        var strOk = true,
+            dexOk = true,
+            intOk = true,
+            chaOk = true;
+        for(; diff < 0; diff++) {
+            if(strOk && strSlider.value <= strSlider.min) {
+                strOk = false;
+            }
+            if(dexOk && dexSlider.value <= dexSlider.min) {
+                dexOk = false;
+            }
+            if(intOk && intSlider.value <= intSlider.min) {
+                intOk = false;
+            }
+            if(chaOk && chaSlider.value <= chaSlider.min) {
+                chaOk = false;
+            }
+
+            if(iterator == 0) {
+                    iterator++;
+                if(strOk) {
+                    strSlider.value--;
+                    continue;
+                }
+            }
+
+            if(iterator == 1) {
+                iterator++;
+                if(dexOk) {
+                    dexSlider.value--;
+                    continue;
+                }
+            }
+
+            if(iterator == 2) {
+                iterator++;
+                if(intOk) {
+                    intSlider.value--;
+                    continue;
+                }
+            }
+
+            if(iterator == 3) {
+                iterator = 0;
+                if(chaOk) {
+                    chaSlider.value--;
+                    continue;
+                } else {
+                    // Note that we need to go through again to make the value propagate
+                    diff--;
+                }
+
+            }
+        }
+    }
+
     menuBar: MenuBar {
         Menu {
             title: qsTr("File")
@@ -34,14 +113,8 @@ ApplicationWindow {
             title: qsTr("Help")
             MenuItem {
                 text: qsTr("About NStatCounter...")
-                onTriggered: aboutDialog.setVisible(true)
             }
         }
-    }
-
-
-    AboutDialog {
-        id: aboutDialog
     }
 
     GridLayout {
@@ -53,6 +126,7 @@ ApplicationWindow {
             id: statsBox
             width: 630
             height: 197
+
             anchors.left: parent.left
             anchors.leftMargin: 5
             anchors.right: parent.right
@@ -60,15 +134,14 @@ ApplicationWindow {
             anchors.top: parent.top
             anchors.topMargin: 5
             transformOrigin: Item.Center
-            checkable: false
-            checked: true
-            flat: false
-            title: qsTr("Stats")
+
+            title: "Stats"
 
             Item {
                 id: levelItem
                 width: 122
                 height: 31
+
                 anchors.top: parent.top
                 anchors.topMargin: 3
                 anchors.left: parent.left
@@ -94,7 +167,7 @@ ApplicationWindow {
                 }
             }
 
-            Item {
+            ActionPointBox {
                 id: apItem
                 width: 162
                 height: 31
@@ -103,23 +176,8 @@ ApplicationWindow {
                 anchors.top: parent.top
                 anchors.topMargin: 3
 
-                Label {
-                    id: apLabel
-                    x: 8
-                    y: 9
-                    text: qsTr("Action Points")
-                    font.bold: true
-                }
-
-                Text {
-                    id: apStat
-                    x: 102
-                    y: 9
-                    width: 29
-                    height: 14
-                    text: qsTr("0/0")
-                    font.pixelSize: 12
-                }
+                usedAP: mainWindow.usedAp
+                totalAP: mainWindow.ap
             }
 
             ColumnLayout {
@@ -142,9 +200,10 @@ ApplicationWindow {
                     anchors.leftMargin: 0
 
                     name: "Strength"
-                    value: 2
-                    max: (levelSpinner.value * 6) + 2
+                    max: mainWindow.ap + 2
                     min: 2
+                    value: 2
+                    remainingValues: mainWindow.remainingAp
                 }
 
                 StatSlider {
@@ -157,10 +216,10 @@ ApplicationWindow {
                     anchors.leftMargin: 0
 
                     name: "Dexterity"
-                    value: 2
-                    max: (levelSpinner.value * 6) + 2
+                    max: mainWindow.ap + 2
                     min: 2
-                    //onValueChanged: mainWindow.updateStats()
+                    value: 2
+                    remainingValues: mainWindow.remainingAp
                 }
 
                 StatSlider {
@@ -173,10 +232,10 @@ ApplicationWindow {
                     anchors.leftMargin: 0
 
                     name: "Intelligence"
-                    value: 1
-                    max: (levelSpinner.value * 6) + 2
+                    max: mainWindow.ap + 1
                     min: 1
-                    //onValueChanged: mainWindow.updateStats()
+                    value: 1
+                    remainingValues: mainWindow.remainingAp
                 }
 
                 StatSlider {
@@ -189,10 +248,10 @@ ApplicationWindow {
                     anchors.leftMargin: 0
 
                     name: "Charisma"
-                    value: 1
-                    max: (levelSpinner.value * 6) + 2
+                    max: mainWindow.ap + 1
                     min: 1
-                    //onValueChanged: mainWindow.updateStats()
+                    value: 1
+                    remainingValues: mainWindow.remainingAp
                 }
             }
         }
