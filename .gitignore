@@ -1,4 +1,7 @@
 .directory
 
+# Don't include user settings
+*.user
+
 # Excluded for personal references
 ref/
